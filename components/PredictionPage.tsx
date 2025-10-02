@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { CarDetails, PredictionResult } from '../types';
 import { BRANDS, BRAND_MODELS, MODEL_AVAILABLE_POWERS, MODEL_AVAILABLE_TORQUES, MODEL_AVAILABLE_FUELS, MODEL_AVAILABLE_TRANSMISSIONS, FUEL_TYPES, TRANSMISSION_TYPES } from '../constants';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const PredictionPage: React.FC = () => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState<CarDetails>({
     brand: BRANDS[0] || 'Acura',
     model: BRAND_MODELS[BRANDS[0]]?.[0] || '',
@@ -256,7 +258,7 @@ const PredictionPage: React.FC = () => {
 
     try {
       if (!formData.model.trim()) {
-        throw new Error("Lütfen bir model girin.");
+        throw new Error(t('prediction.errors.fillModel'));
       }
       
       // API'ye istek gönder
@@ -271,7 +273,7 @@ const PredictionPage: React.FC = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Tahmin yapılırken bir hata oluştu.');
+        throw new Error(errorData.error || t('prediction.errors.predictionFailed'));
       }
 
       const data = await response.json();
@@ -283,23 +285,27 @@ const PredictionPage: React.FC = () => {
         maxPrice: data.max_price,
         confidence: data.confidence,
         factors: [
-          `Marka: ${formData.brand}`,
-          `Model: ${formData.model}`,
-          `Yaş: ${formData.age} yıl`,
-          `Kilometre: ${formData.mileage.toLocaleString('tr-TR')} km`,
-          `Yakıt: ${formData.fuelType}`,
-          `Vites: ${formData.transmission}`,
-          `Güç: ${formData.power} HP`,
-          `Tork: ${formData.torque} Nm`
+          `${t('prediction.form.brand')}: ${formData.brand}`,
+          `${t('prediction.form.model')}: ${formData.model}`,
+          `${t('prediction.form.age')}: ${formData.age}`,
+          `${t('prediction.form.mileage')}: ${formData.mileage.toLocaleString()}`,
+          `${t('prediction.form.fuelType')}: ${formData.fuelType}`,
+          `${t('prediction.form.transmission')}: ${formData.transmission}`,
+          `${t('prediction.form.power')}: ${formData.power} HP`,
+          `${t('prediction.form.torque')}: ${formData.torque} Nm`
         ]
       };
       
       setResult(prediction);
     } catch (err) {
       if (err instanceof Error) {
-        setError(err.message);
+        if (err.message.includes('Failed to fetch')) {
+          setError(t('prediction.errors.failedToFetch'));
+        } else {
+          setError(err.message);
+        }
       } else {
-        setError("Bilinmeyen bir hata oluştu.");
+        setError(t('prediction.errors.unknownError'));
       }
     } finally {
       setLoading(false);
@@ -318,21 +324,21 @@ const PredictionPage: React.FC = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white p-8 sm:p-10 rounded-xl shadow-lg w-full max-w-4xl mx-auto">
           <div className="text-center mb-10">
-            <h1 className="text-3xl font-thin tracking-tight text-gray-900 sm:text-4xl">Araba Fiyatını Hesapla</h1>
-            <p className="mt-3 text-lg font-light text-gray-500">Aracınızın bilgilerini girin ve akıllı algoritmanın piyasa değerini anında tahmin etmesini sağlayın.</p>
+            <h1 className="text-3xl font-thin tracking-tight text-gray-900 sm:text-4xl">{t('prediction.title')}</h1>
+            <p className="mt-3 text-lg font-light text-gray-500">{t('prediction.subtitle')}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="brand" className={labelClasses}>Marka</label>
+                <label htmlFor="brand" className={labelClasses}>{t('prediction.form.brand')}</label>
                 <select id="brand" name="brand" value={formData.brand} onChange={handleChange} className={`${inputBaseClasses} custom-select pl-4 pr-12`}>
                   {BRANDS.map(b => <option key={b} value={b}>{b}</option>)}
                 </select>
               </div>
               
               <div>
-                <label htmlFor="model" className={labelClasses}>Model</label>
+                <label htmlFor="model" className={labelClasses}>{t('prediction.form.model')}</label>
                 <select 
                   id="model" 
                   name="model" 
@@ -358,12 +364,12 @@ const PredictionPage: React.FC = () => {
                   className="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <label htmlFor="isNew" className="ml-3 text-sm font-light text-gray-700">
-                  Sıfır Araç
+                  {t('prediction.form.newCar')}
                 </label>
               </div>
 
               <div>
-                <label htmlFor="age" className={labelClasses}>Araç Yaşı (Yıl)</label>
+                <label htmlFor="age" className={labelClasses}>{t('prediction.form.age')}</label>
                 <input 
                   type="number" 
                   id="age" 
@@ -379,7 +385,7 @@ const PredictionPage: React.FC = () => {
               </div>
 
               <div>
-                <label htmlFor="mileage" className={labelClasses}>Kilometre</label>
+                <label htmlFor="mileage" className={labelClasses}>{t('prediction.form.mileage')}</label>
                 <input 
                   type="number" 
                   id="mileage" 
@@ -395,7 +401,7 @@ const PredictionPage: React.FC = () => {
               </div>
 
               <div>
-                <label htmlFor="fuelType" className={labelClasses}>Yakıt Türü</label>
+                <label htmlFor="fuelType" className={labelClasses}>{t('prediction.form.fuelType')}</label>
                 <select id="fuelType" name="fuelType" value={formData.fuelType} onChange={handleChange} className={`${inputBaseClasses} custom-select pl-4 pr-12`}>
                   {availableFuelTypes.length === 0 && <option value="">Model seçin</option>}
                   {availableFuelTypes.map(f => <option key={f.value} value={f.value}>{f.label}</option>)}
@@ -403,7 +409,7 @@ const PredictionPage: React.FC = () => {
               </div>
 
               <div>
-                <label htmlFor="transmission" className={labelClasses}>Vites Türü</label>
+                <label htmlFor="transmission" className={labelClasses}>{t('prediction.form.transmission')}</label>
                 <select id="transmission" name="transmission" value={formData.transmission} onChange={handleChange} className={`${inputBaseClasses} custom-select pl-4 pr-12`}>
                   {availableTransmissions.length === 0 && <option value="">Model seçin</option>}
                   {availableTransmissions.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
@@ -411,7 +417,7 @@ const PredictionPage: React.FC = () => {
               </div>
 
               <div>
-                <label htmlFor="power" className={labelClasses}>Güç (HP)</label>
+                <label htmlFor="power" className={labelClasses}>{t('prediction.form.power')}</label>
                 {availablePowers.length > 0 ? (
                   <select 
                     id="power" 
@@ -442,7 +448,7 @@ const PredictionPage: React.FC = () => {
               </div>
 
               <div>
-                <label htmlFor="torque" className={labelClasses}>Tork (Nm)</label>
+                <label htmlFor="torque" className={labelClasses}>{t('prediction.form.torque')}</label>
                 {availableTorques.length > 0 ? (
                   <select 
                     id="torque" 
@@ -479,7 +485,7 @@ const PredictionPage: React.FC = () => {
                 disabled={loading} 
                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-light text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300 disabled:cursor-not-allowed transition duration-300"
               >
-                {loading ? 'Hesaplanıyor...' : 'Fiyat Tahmini Yap'}
+                {loading ? t('prediction.form.calculating') : t('prediction.form.submit')}
               </button>
             </div>
           </form>
@@ -493,7 +499,7 @@ const PredictionPage: React.FC = () => {
           {result && (
             <div className="mt-8 space-y-6 animate-fade-in">
               <div className="p-8 bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-xl text-center shadow-lg">
-                <h3 className="text-xl font-light text-gray-700 mb-4">Tahmini Piyasa Değeri</h3>
+                <h3 className="text-xl font-light text-gray-700 mb-4">{t('prediction.result.estimated')}</h3>
                 <p className="text-5xl font-thin text-blue-700 my-4">{formatPrice(result.estimatedPrice)}</p>
                 <div className="flex justify-center items-center gap-4 text-gray-600 font-light mt-4">
                   <span className="px-4 py-2 bg-white rounded-lg shadow-sm">
@@ -506,7 +512,7 @@ const PredictionPage: React.FC = () => {
               </div>
               
               <div className="p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
-                <h4 className="text-lg font-light text-gray-700 mb-3">Değerlendirme Faktörleri</h4>
+                <h4 className="text-lg font-light text-gray-700 mb-3">{t('prediction.result.factors')}</h4>
                 <ul className="space-y-2">
                   {result.factors.map((factor, idx) => (
                     <li key={idx} className="text-gray-600 font-light flex items-center">
@@ -518,8 +524,7 @@ const PredictionPage: React.FC = () => {
               </div>
 
               <p className="text-gray-500 text-sm font-light text-center">
-                Bu tahmin, XGBoost makine öğrenmesi modeli ile hesaplanmıştır. 
-                Gerçek piyasa değeri değişiklik gösterebilir. Fiyatlar USD cinsindendir.
+                {t('prediction.result.disclaimer')}
               </p>
             </div>
           )}

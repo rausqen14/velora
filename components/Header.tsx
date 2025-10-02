@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Header: React.FC = () => {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
   // Check if we are on the landing page
   const isLandingPage = location.pathname === '/';
@@ -72,11 +74,22 @@ const Header: React.FC = () => {
           </div>
           <nav className="hidden md:flex md:items-center md:space-x-8">
             <Link to="/" className={navLinkClasses('/')}>
-              Ana Sayfa
+              {t('header.home')}
             </Link>
             <Link to="/tahmin" className={navLinkClasses('/tahmin')}>
-              Fiyat Tahmini
+              {t('header.prediction')}
             </Link>
+            <button
+              onClick={() => setLanguage(language === 'tr' ? 'en' : 'tr')}
+              className={`text-sm font-light transition-colors px-3 py-1 rounded border ${
+                useWhiteText
+                  ? 'text-white border-white/30 hover:bg-white/10'
+                  : 'text-gray-700 border-gray-300 hover:bg-gray-100'
+              }`}
+              title={language === 'tr' ? 'Switch to English' : 'Türkçe\'ye Geç'}
+            >
+              {language === 'tr' ? '🇬🇧 EN' : '🇹🇷 TR'}
+            </button>
           </nav>
         </div>
       </div>
