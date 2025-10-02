@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import Header from './components/Header';
 import LandingPage from './components/LandingPage';
 import PredictionPage from './components/PredictionPage';
@@ -20,6 +21,7 @@ const App: React.FC = () => {
           </Routes>
         </main>
       </ErrorBoundary>
+      <Analytics />
     </div>
   );
 };
