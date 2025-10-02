@@ -88,7 +88,7 @@ const Header: React.FC = () => {
               }`}
               title={language === 'tr' ? 'Switch to English' : 'Türkçe\'ye Geç'}
             >
-              {language === 'tr' ? '🇬🇧 EN' : '🇹🇷 TR'}
+              {language === 'tr' ? 'EN' : 'TR'}
             </button>
           </nav>
         </div>
