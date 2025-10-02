@@ -1,0 +1,5 @@
+{
+  "name": "Araba Fiyat Tahmini",
+  "description": "Akıllı algoritma ile araba fiyat tahmini uygulaması. Aracınızın marka, model, yıl ve kilometre gibi özelliklerini girerek piyasa değerini anında öğrenin.",
+  "requestFramePermissions": []
+}
