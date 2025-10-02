@@ -12,7 +12,7 @@ CORS(app, resources={
             "http://localhost:3000",
             "http://localhost:5173",
             "https://*.vercel.app",
-            "https://your-app-name.vercel.app"  # Replace with your actual Vercel URL
+            "https://velora-black.vercel.app"
         ]
     }
 })
