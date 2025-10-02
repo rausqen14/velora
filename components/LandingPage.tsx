@@ -7,7 +7,7 @@ const LandingPage: React.FC = () => {
     <>
       {/* Hero Section */}
       <section className="relative h-screen flex items-start justify-center text-center text-white">
-        <div className="absolute top-0 left-0 w-full h-full bg-cover bg-center" style={{ backgroundImage: `url('/arka_plan/background.jpg')` }}></div>
+        <div className="absolute top-0 left-0 w-full h-full bg-cover bg-center" style={{ backgroundImage: `url('/background.jpg')` }}></div>
         <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-60"></div>
         <div className="relative z-10 p-4 mt-32">
           <h1 className="text-5xl md:text-7xl font-thin tracking-tight drop-shadow-lg">
